@@ -13,7 +13,7 @@
 
 ## architekturentscheidungen / architectural decisions
 
-- **repositories (DIP & DRY)**: `CrudRepository<T>` interface, `InMemoryRepository<T>` (`ConcurrentHashMap`), 8 beans in `RepositoryConfig`.
+- **repositories (DIP & DRY)**: `CrudRepository<T>` interface, `InMemoryRepository<T>` (`HashMap`), 8 beans in `RepositoryConfig`.
 - **services (SRP)**: `LibraryService` (`Library`, `Member`), `CatalogService` (`Publication`, `BookDetails`, `MagazineDetails`, `ReadableItem`, `Author`, `BookAuthor`), `CirculationService` (`Loan`, `Reservation`).
 - **controllers**: `HelloController` (`GET /hello`), `ApiController` (`/api/**`).
 - **extensions**: `BookDetails` (`isbn`, `pageCount`), `MagazineDetails` (`issueNumber`), `Library` (`address`), `Member` (`email`), `Loan` (`dueDate`, `returnDate` as `LocalDate`).

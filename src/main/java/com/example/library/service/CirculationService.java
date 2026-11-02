@@ -1,13 +1,13 @@
 package com.example.library.service;
 
-import static com.example.library.service.CatalogService.require;
-
-import com.example.library.model.*;
+import com.example.library.model.Loan;
+import com.example.library.model.Member;
+import com.example.library.model.ReadableItem;
+import com.example.library.model.Reservation;
 import com.example.library.repository.CrudRepository;
-import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,61 +16,115 @@ public class CirculationService {
     private final CrudRepository<Reservation> reservations;
     private final CrudRepository<Member> members;
     private final CrudRepository<ReadableItem> items;
-    private final Clock clock = Clock.systemDefaultZone();
 
-    public CirculationService(CrudRepository<Loan> loans, CrudRepository<Reservation> reservations, CrudRepository<Member> members, CrudRepository<ReadableItem> items) {
-        this.loans = loans; this.reservations = reservations; this.members = members; this.items = items;
+    public CirculationService(
+            CrudRepository<Loan> loans,
+            CrudRepository<Reservation> reservations,
+            CrudRepository<Member> members,
+            CrudRepository<ReadableItem> items) {
+        this.loans = loans;
+        this.reservations = reservations;
+        this.members = members;
+        this.items = items;
     }
 
-    public synchronized Reservation reserve(String memberId, String itemId) {
-        Member member = require(members, memberId, "member");
-        ReadableItem item = require(items, itemId, "item");
-        if (!item.isAvailable()) throw new IllegalStateException("item is " + item.getStatus());
+    public Reservation reserve(String memberId, String itemId) {
+        Member member = members.findById(memberId);
+        ReadableItem item = items.findById(itemId);
+        if (member == null || item == null || !item.isAvailable()) {
+            return null;
+        }
+
         item.setStatus(ReadableItem.Status.RESERVED);
-        Reservation reservation = reservations.save(new Reservation(null, memberId, itemId, LocalDate.now(clock)));
-        member.getReservations().add(reservation);
-        return reservation;
+        Reservation reservation = new Reservation(null, memberId, itemId, LocalDate.now());
+        Reservation savedReservation = reservations.save(reservation);
+        member.getReservations().add(savedReservation);
+        return savedReservation;
     }
-    public synchronized Reservation cancelReservation(String id) {
-        Reservation reservation = require(reservations, id, "reservation");
-        if (!reservation.isActive()) throw new IllegalStateException("reservation is " + reservation.getStatus());
+
+    public Reservation cancelReservation(String id) {
+        Reservation reservation = reservations.findById(id);
+        if (reservation == null || !reservation.isActive()) {
+            return null;
+        }
+
         reservation.setStatus(Reservation.Status.CANCELLED);
-        items.findById(reservation.getReadableItemId()).ifPresent(i -> i.setStatus(ReadableItem.Status.AVAILABLE));
+        ReadableItem item = items.findById(reservation.getReadableItemId());
+        if (item != null) {
+            item.setStatus(ReadableItem.Status.AVAILABLE);
+        }
         return reservation;
     }
-    public List<Reservation> findAllReservations() { return reservations.findAll(); }
-    public Optional<Reservation> findReservation(String id) { return reservations.findById(id); }
 
-    public synchronized Loan borrow(String memberId, List<String> itemIds, LocalDate dueDate) {
-        Member member = require(members, memberId, "member");
-        LocalDate today = LocalDate.now(clock);
-        if (itemIds == null || itemIds.isEmpty()) throw new IllegalArgumentException("no items given");
-        if (dueDate == null || !dueDate.isAfter(today)) throw new IllegalArgumentException("due date must be in the future");
-        List<ReadableItem> borrowed = itemIds.stream().distinct().map(id -> require(items, id, "item")).toList();
-        List<Reservation> fulfilled = borrowed.stream().filter(i -> !i.isAvailable()).map(i -> activeReservation(memberId, i)).toList();
-        Loan loan = new Loan(null, memberId, today, dueDate);
-        borrowed.forEach(i -> i.setStatus(ReadableItem.Status.BORROWED));
-        fulfilled.forEach(r -> r.setStatus(Reservation.Status.COMPLETED));
-        loan.getItems().addAll(borrowed);
-        loan.getReservations().addAll(fulfilled);
-        member.getLoans().add(loans.save(loan));
+    public List<Reservation> findAllReservations() {
+        return reservations.findAll();
+    }
+
+    public Reservation findReservation(String id) {
+        return reservations.findById(id);
+    }
+
+    public Loan borrow(String memberId, List<String> itemIds, LocalDate dueDate) {
+        Member member = members.findById(memberId);
+        if (member == null || itemIds == null || itemIds.isEmpty()) {
+            return null;
+        }
+
+        List<ReadableItem> borrowedItems = new ArrayList<>();
+        for (String itemId : itemIds) {
+            ReadableItem item = items.findById(itemId);
+            if (item != null && item.isAvailable()) {
+                item.setStatus(ReadableItem.Status.BORROWED);
+                borrowedItems.add(item);
+            }
+        }
+
+        Loan loan = new Loan(null, memberId, LocalDate.now(), dueDate);
+        loan.getItems().addAll(borrowedItems);
+        Loan savedLoan = loans.save(loan);
+        member.getLoans().add(savedLoan);
+        return savedLoan;
+    }
+
+    public Loan returnLoan(String id) {
+        Loan loan = loans.findById(id);
+        if (loan == null || loan.isReturned()) {
+            return null;
+        }
+
+        loan.setReturnDate(LocalDate.now());
+        for (ReadableItem item : loan.getItems()) {
+            item.setStatus(ReadableItem.Status.AVAILABLE);
+        }
         return loan;
     }
-    public synchronized Loan returnLoan(String id) {
-        Loan loan = require(loans, id, "loan");
-        if (loan.isReturned()) throw new IllegalStateException("loan already returned");
-        loan.setReturnDate(LocalDate.now(clock));
-        loan.getItems().forEach(i -> i.setStatus(ReadableItem.Status.AVAILABLE));
-        return loan;
-    }
-    public List<Loan> findAllLoans() { return loans.findAll(); }
-    public Optional<Loan> findLoan(String id) { return loans.findById(id); }
-    public List<Loan> findLoansByMember(String memberId) { return loans.findBy(l -> memberId.equals(l.getMemberId())); }
-    public List<Loan> findOverdueLoans() { LocalDate today = LocalDate.now(clock); return loans.findBy(l -> l.isOverdue(today)); }
 
-    private Reservation activeReservation(String memberId, ReadableItem item) {
-        if (item.getStatus() != ReadableItem.Status.RESERVED) throw new IllegalStateException("item " + item.getId() + " is " + item.getStatus());
-        return reservations.findBy(r -> r.isActive() && r.getReadableItemId().equals(item.getId()) && r.getMemberId().equals(memberId)).stream().findFirst()
-                .orElseThrow(() -> new IllegalStateException("item " + item.getId() + " is reserved by another member"));
+    public List<Loan> findAllLoans() {
+        return loans.findAll();
+    }
+
+    public Loan findLoan(String id) {
+        return loans.findById(id);
+    }
+
+    public List<Loan> findLoansByMember(String memberId) {
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans.findAll()) {
+            if (memberId != null && memberId.equals(loan.getMemberId())) {
+                result.add(loan);
+            }
+        }
+        return result;
+    }
+
+    public List<Loan> findOverdueLoans() {
+        LocalDate today = LocalDate.now();
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans.findAll()) {
+            if (loan.isOverdue(today)) {
+                result.add(loan);
+            }
+        }
+        return result;
     }
 }
