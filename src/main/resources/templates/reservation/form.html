@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Reservation</title>
+</head>
+<body>
+    <h1>Create New Reservation</h1>
+    <form th:action="@{/reservations}" th:object="${reservation}" method="post">
+        <div>
+            <label for="memberId">Member:</label>
+            <select id="memberId" th:field="*{memberId}" required>
+                <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.name + ' (' + member.id + ')'}"></option>
+            </select>
+        </div>
+        <div>
+            <label for="readableItemId">Available Item:</label>
+            <select id="readableItemId" th:field="*{readableItemId}" required>
+                <option th:each="item : ${availableItems}" th:value="${item.id}" th:text="${item.barcode + ' (' + item.publicationId + ')'}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Save</button>
+            <a th:href="@{/reservations}">Cancel</a>
+        </div>
+    </form>
+</body>
+</html>
