@@ -4,9 +4,13 @@ import com.example.library.model.Author;
 import com.example.library.model.BookDetails;
 import com.example.library.model.Library;
 import com.example.library.model.MagazineDetails;
+import com.example.library.model.Member;
 import com.example.library.model.ReadableItem;
 import com.example.library.service.CatalogService;
+import com.example.library.service.CirculationService;
 import com.example.library.service.LibraryService;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +18,15 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
     private final LibraryService libraryService;
     private final CatalogService catalogService;
+    private final CirculationService circulationService;
 
     public DataInitializer(
             LibraryService libraryService,
-            CatalogService catalogService) {
+            CatalogService catalogService,
+            CirculationService circulationService) {
         this.libraryService = libraryService;
         this.catalogService = catalogService;
+        this.circulationService = circulationService;
     }
 
     @Override
@@ -46,13 +53,22 @@ public class DataInitializer implements CommandLineRunner {
         catalogService.linkAuthor(book2.getId(), tolkien.getId());
         catalogService.linkAuthor(book3.getId(), martin.getId());
 
-        catalogService.addCopy(
+        ReadableItem item1 = catalogService.addCopy(
                 new ReadableItem("item-1", book1.getId(), "BC-101"), central.getId());
-        catalogService.addCopy(
+        ReadableItem item2 = catalogService.addCopy(
                 new ReadableItem("item-2", book2.getId(), "BC-102"), central.getId());
         catalogService.addCopy(
                 new ReadableItem("item-3", book3.getId(), "BC-103"), central.getId());
         catalogService.addCopy(
                 new ReadableItem("item-4", book3.getId(), "BC-104"), science.getId());
+
+        Member member1 = libraryService.registerMember(
+                new Member("mem-1", "Ioan Petcu", "ioan.petcu@stud.ubbcluj.ro", central.getId()));
+        Member member2 = libraryService.registerMember(
+                new Member("mem-2", "Andrei Emanuel", "andrei.emanuel@stud.ubbcluj.ro", central.getId()));
+
+        circulationService.borrow(
+                member1.getId(), List.of(item1.getId()), LocalDate.now().plusDays(14));
+        circulationService.reserve(member2.getId(), item2.getId());
     }
 }
