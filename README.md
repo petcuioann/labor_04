@@ -1,8 +1,5 @@
 # library management system (thema 4)
 
-- [deutsch (README_DE.md)](README_DE.md)
-- [english (README_EN.md)](README_EN.md)
-
 ## files by layer (20 java files)
 
 - **root / config**: `pom.xml`, `.gitignore`, `src/main/resources/application.properties`, `LibraryApplication.java`
