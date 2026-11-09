@@ -13,7 +13,7 @@
     <artifactId>library</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>library</name>
-    <description>Projektaufgabe 1 - Thema 4: Library Management System (In-Memory)</description>
+    <description>Projektaufgabe 2 - Thema 4: Library Management System (Thymeleaf &amp; In-Memory CRUD)</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -21,6 +21,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
     <build>
