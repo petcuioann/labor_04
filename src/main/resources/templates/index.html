@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Management System</title>
+</head>
+<body>
+    <h1>Library Management System (Thema 4)</h1>
+    <nav>
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <hr>
+    <h2>System Overview</h2>
+    <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Entity</th>
+                <th>Total In-Memory Records</th>
+                <th>Manage</th>
+                <th>Create New</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Libraries</td>
+                <td th:text="${libraryCount}">0</td>
+                <td><a th:href="@{/libraries}">View Libraries</a></td>
+                <td><a th:href="@{/libraries/new}">New Library</a></td>
+            </tr>
+            <tr>
+                <td>Authors</td>
+                <td th:text="${authorCount}">0</td>
+                <td><a th:href="@{/authors}">View Authors</a></td>
+                <td><a th:href="@{/authors/new}">New Author</a></td>
+            </tr>
+            <tr>
+                <td>Books</td>
+                <td th:text="${bookCount}">0</td>
+                <td><a th:href="@{/books}">View Books</a></td>
+                <td><a th:href="@{/books/new}">New Book</a></td>
+            </tr>
+            <tr>
+                <td>Readable Items</td>
+                <td th:text="${itemCount}">0</td>
+                <td><a th:href="@{/items}">View Items</a></td>
+                <td><a th:href="@{/items/new}">New Item</a></td>
+            </tr>
+            <tr>
+                <td>Members</td>
+                <td th:text="${memberCount}">0</td>
+                <td><a th:href="@{/members}">View Members</a></td>
+                <td><a th:href="@{/members/new}">New Member</a></td>
+            </tr>
+            <tr>
+                <td>Loans</td>
+                <td th:text="${loanCount}">0</td>
+                <td><a th:href="@{/loans}">View Loans</a></td>
+                <td><a th:href="@{/loans/new}">New Loan</a></td>
+            </tr>
+            <tr>
+                <td>Reservations</td>
+                <td th:text="${reservationCount}">0</td>
+                <td><a th:href="@{/reservations}">View Reservations</a></td>
+                <td><a th:href="@{/reservations/new}">New Reservation</a></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
