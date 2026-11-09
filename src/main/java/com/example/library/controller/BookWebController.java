@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +41,12 @@ public class BookWebController {
         if (authorId != null && !authorId.isEmpty()) {
             catalogService.linkAuthor(saved.getId(), authorId);
         }
+        return "redirect:/books";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteBook(@PathVariable String id) {
+        catalogService.deletePublication(id);
         return "redirect:/books";
     }
 }
