@@ -152,6 +152,12 @@ public class CatalogService {
     }
 
     public Author saveAuthor(Author author) {
+        if (author.getId() != null) {
+            Author existing = authors.findById(author.getId());
+            if (existing != null && existing != author && author.getBooks().isEmpty()) {
+                author.getBooks().addAll(existing.getBooks());
+            }
+        }
         return authors.save(author);
     }
 
@@ -164,6 +170,13 @@ public class CatalogService {
     }
 
     public boolean deleteAuthor(String id) {
+        Author author = authors.findById(id);
+        if (author == null) {
+            return false;
+        }
+        for (BookAuthor link : new ArrayList<>(author.getBooks())) {
+            unlinkAuthor(link.getId());
+        }
         return authors.delete(id);
     }
 
