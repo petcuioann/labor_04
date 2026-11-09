@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Members</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">Dashboard</a> |
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <h1>Members</h1>
+    <p><a th:href="@{/members/new}">Register New Member</a></p>
+    <table border="1" cellpadding="6" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Library ID</th>
+                <th>Loans</th>
+                <th>Reservations</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="member : ${members}">
+                <td th:text="${member.id}"></td>
+                <td th:text="${member.name}"></td>
+                <td th:text="${member.email}"></td>
+                <td th:text="${member.libraryId}"></td>
+                <td th:text="${member.loans.size()}"></td>
+                <td th:text="${member.reservations.size()}"></td>
+                <td>
+                    <form th:action="@{'/members/' + ${member.id} + '/delete'}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
