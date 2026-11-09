@@ -18,6 +18,17 @@ public class LibraryService {
     }
 
     public Library saveLibrary(Library library) {
+        if (library.getId() != null) {
+            Library existing = libraries.findById(library.getId());
+            if (existing != null && existing != library) {
+                if (library.getMembers().isEmpty()) {
+                    library.getMembers().addAll(existing.getMembers());
+                }
+                if (library.getReadableItems().isEmpty()) {
+                    library.getReadableItems().addAll(existing.getReadableItems());
+                }
+            }
+        }
         return libraries.save(library);
     }
 
@@ -34,9 +45,20 @@ public class LibraryService {
     }
 
     public Member registerMember(Member member) {
+        if (member.getId() != null) {
+            Member existing = members.findById(member.getId());
+            if (existing != null && existing != member) {
+                if (member.getLoans().isEmpty()) {
+                    member.getLoans().addAll(existing.getLoans());
+                }
+                if (member.getReservations().isEmpty()) {
+                    member.getReservations().addAll(existing.getReservations());
+                }
+            }
+        }
         Member savedMember = members.save(member);
         Library library = libraries.findById(member.getLibraryId());
-        if (library != null) {
+        if (library != null && !library.getMembers().contains(savedMember)) {
             library.getMembers().add(savedMember);
         }
         return savedMember;
