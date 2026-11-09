@@ -56,6 +56,24 @@ public class CirculationService {
         return reservation;
     }
 
+    public boolean deleteReservation(String id) {
+        Reservation reservation = reservations.findById(id);
+        if (reservation == null) {
+            return false;
+        }
+        if (reservation.isActive()) {
+            ReadableItem item = items.findById(reservation.getReadableItemId());
+            if (item != null) {
+                item.setStatus(ReadableItem.Status.AVAILABLE);
+            }
+        }
+        Member member = members.findById(reservation.getMemberId());
+        if (member != null) {
+            member.getReservations().remove(reservation);
+        }
+        return reservations.delete(id);
+    }
+
     public List<Reservation> findAllReservations() {
         return reservations.findAll();
     }
@@ -97,6 +115,23 @@ public class CirculationService {
             item.setStatus(ReadableItem.Status.AVAILABLE);
         }
         return loan;
+    }
+
+    public boolean deleteLoan(String id) {
+        Loan loan = loans.findById(id);
+        if (loan == null) {
+            return false;
+        }
+        if (!loan.isReturned()) {
+            for (ReadableItem item : loan.getItems()) {
+                item.setStatus(ReadableItem.Status.AVAILABLE);
+            }
+        }
+        Member member = members.findById(loan.getMemberId());
+        if (member != null) {
+            member.getLoans().remove(loan);
+        }
+        return loans.delete(id);
     }
 
     public List<Loan> findAllLoans() {
