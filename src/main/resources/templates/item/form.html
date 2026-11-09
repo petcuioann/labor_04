@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Readable Item</title>
+</head>
+<body>
+    <h1>Create New Readable Item</h1>
+    <form th:action="@{/items}" th:object="${item}" method="post">
+        <div>
+            <label for="barcode">Barcode:</label>
+            <input type="text" id="barcode" th:field="*{barcode}" required>
+        </div>
+        <div>
+            <label for="publicationId">Publication:</label>
+            <select id="publicationId" th:field="*{publicationId}" required>
+                <option th:each="pub : ${publications}" th:value="${pub.id}" th:text="${pub.title + ' (' + pub.id + ')'}"></option>
+            </select>
+        </div>
+        <div>
+            <label for="libraryId">Library:</label>
+            <select id="libraryId" name="libraryId" required>
+                <option th:each="lib : ${libraries}" th:value="${lib.id}" th:text="${lib.name + ' (' + lib.id + ')'}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Save</button>
+            <a th:href="@{/items}">Cancel</a>
+        </div>
+    </form>
+</body>
+</html>
