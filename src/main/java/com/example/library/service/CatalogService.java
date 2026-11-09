@@ -34,11 +34,28 @@ public class CatalogService {
     }
 
     public BookDetails saveBook(BookDetails book) {
+        if (book.getId() != null) {
+            Publication existing = publications.findById(book.getId());
+            if (existing != null && existing != book) {
+                if (book.getCopies().isEmpty()) {
+                    book.getCopies().addAll(existing.getCopies());
+                }
+                if (existing instanceof BookDetails && book.getBookAuthors().isEmpty()) {
+                    book.getBookAuthors().addAll(((BookDetails) existing).getBookAuthors());
+                }
+            }
+        }
         publications.save(book);
         return book;
     }
 
     public MagazineDetails saveMagazine(MagazineDetails magazine) {
+        if (magazine.getId() != null) {
+            Publication existing = publications.findById(magazine.getId());
+            if (existing != null && existing != magazine && magazine.getCopies().isEmpty()) {
+                magazine.getCopies().addAll(existing.getCopies());
+            }
+        }
         publications.save(magazine);
         return magazine;
     }
@@ -72,6 +89,15 @@ public class CatalogService {
     }
 
     public boolean deletePublication(String id) {
+        Publication publication = publications.findById(id);
+        if (publication == null) {
+            return false;
+        }
+        if (publication instanceof BookDetails) {
+            for (BookAuthor link : new ArrayList<>(((BookDetails) publication).getBookAuthors())) {
+                unlinkAuthor(link.getId());
+            }
+        }
         return publications.delete(id);
     }
 
