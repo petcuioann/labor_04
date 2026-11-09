@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Library</title>
+</head>
+<body>
+    <h1>Create New Library</h1>
+    <form th:action="@{/libraries}" th:object="${library}" method="post">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" required>
+        </div>
+        <div>
+            <label for="address">Address:</label>
+            <input type="text" id="address" th:field="*{address}" required>
+        </div>
+        <div>
+            <button type="submit">Save</button>
+            <a th:href="@{/libraries}">Cancel</a>
+        </div>
+    </form>
+</body>
+</html>

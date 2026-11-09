@@ -1,9 +1,12 @@
 package com.example.library.controller;
 
+import com.example.library.model.Library;
 import com.example.library.service.LibraryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -19,5 +22,17 @@ public class LibraryWebController {
     public String listLibraries(Model model) {
         model.addAttribute("libraries", libraryService.findAllLibraries());
         return "library/index";
+    }
+
+    @GetMapping("/new")
+    public String showCreateForm(Model model) {
+        model.addAttribute("library", new Library());
+        return "library/form";
+    }
+
+    @PostMapping
+    public String createLibrary(@ModelAttribute("library") Library library) {
+        libraryService.saveLibrary(library);
+        return "redirect:/libraries";
     }
 }
