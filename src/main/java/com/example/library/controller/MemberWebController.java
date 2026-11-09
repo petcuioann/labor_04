@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,6 +35,12 @@ public class MemberWebController {
     @PostMapping
     public String createMember(@ModelAttribute("member") Member member) {
         libraryService.registerMember(member);
+        return "redirect:/members";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteMember(@PathVariable String id) {
+        libraryService.deleteMember(id);
         return "redirect:/members";
     }
 }
