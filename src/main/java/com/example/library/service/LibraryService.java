@@ -41,6 +41,18 @@ public class LibraryService {
     }
 
     public boolean deleteLibrary(String id) {
+        Library library = libraries.findById(id);
+        if (library == null) {
+            return false;
+        }
+        boolean hasMembers = !library.getMembers().isEmpty()
+                || !findMembersByLibrary(id).isEmpty();
+        boolean hasItems = !library.getReadableItems().isEmpty();
+        if (hasMembers || hasItems) {
+            throw new IllegalStateException(
+                    "Cannot delete library '" + library.getName()
+                            + "' because it still has linked members or readable items. Delete child entities first.");
+        }
         return libraries.delete(id);
     }
 
