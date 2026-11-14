@@ -42,14 +42,14 @@ public class CatalogService {
     }
 
     public BookDetails saveBook(BookDetails book) {
-        if (book.getId() != null) {
+        if (book.getId() != null && !book.getId().isBlank()) {
             Publication existing = publications.findById(book.getId());
             if (existing != null && existing != book) {
                 if (book.getCopies().isEmpty()) {
                     book.getCopies().addAll(existing.getCopies());
                 }
-                if (existing instanceof BookDetails && book.getBookAuthors().isEmpty()) {
-                    book.getBookAuthors().addAll(((BookDetails) existing).getBookAuthors());
+                if (existing instanceof BookDetails existingBook && book.getBookAuthors().isEmpty()) {
+                    book.getBookAuthors().addAll(existingBook.getBookAuthors());
                 }
             }
         }
@@ -58,7 +58,7 @@ public class CatalogService {
     }
 
     public MagazineDetails saveMagazine(MagazineDetails magazine) {
-        if (magazine.getId() != null) {
+        if (magazine.getId() != null && !magazine.getId().isBlank()) {
             Publication existing = publications.findById(magazine.getId());
             if (existing != null && existing != magazine && magazine.getCopies().isEmpty()) {
                 magazine.getCopies().addAll(existing.getCopies());
@@ -79,8 +79,8 @@ public class CatalogService {
     public List<BookDetails> findAllBooks() {
         List<BookDetails> result = new ArrayList<>();
         for (Publication publication : publications.findAll()) {
-            if (publication instanceof BookDetails) {
-                result.add((BookDetails) publication);
+            if (publication instanceof BookDetails book) {
+                result.add(book);
             }
         }
         return result;
@@ -89,8 +89,8 @@ public class CatalogService {
     public List<MagazineDetails> findAllMagazines() {
         List<MagazineDetails> result = new ArrayList<>();
         for (Publication publication : publications.findAll()) {
-            if (publication instanceof MagazineDetails) {
-                result.add((MagazineDetails) publication);
+            if (publication instanceof MagazineDetails mag) {
+                result.add(mag);
             }
         }
         return result;
@@ -122,20 +122,78 @@ public class CatalogService {
     }
 
     public ReadableItem addCopy(ReadableItem item, String libraryId) {
-        item.setStatus(ReadableItem.Status.AVAILABLE);
+        if (item.getStatus() == null) {
+            item.setStatus(ReadableItem.Status.AVAILABLE);
+        }
         ReadableItem savedItem = items.save(item);
 
-        Publication publication = publications.findById(item.getPublicationId());
+        Publication publication = publications.findById(savedItem.getPublicationId());
         if (publication != null) {
+            publication.getCopies().removeIf(c -> savedItem.getId().equals(c.getId()));
             publication.getCopies().add(savedItem);
+            publications.save(publication);
         }
 
-        Library library = libraries.findById(libraryId);
-        if (library != null) {
-            library.getReadableItems().add(savedItem);
+        if (libraryId != null && !libraryId.isBlank()) {
+            Library library = libraries.findById(libraryId);
+            if (library != null) {
+                library.getReadableItems().removeIf(c -> savedItem.getId().equals(c.getId()));
+                library.getReadableItems().add(savedItem);
+                libraries.save(library);
+            }
         }
 
         return savedItem;
+    }
+
+    public ReadableItem updateCopy(ReadableItem item, String libraryId) {
+        ReadableItem existing = item.getId() != null ? items.findById(item.getId()) : null;
+        String oldPublicationId = existing != null ? existing.getPublicationId() : null;
+        if (existing != null && item.getStatus() == null) {
+            item.setStatus(existing.getStatus());
+        }
+        ReadableItem savedItem = items.save(item);
+
+        if (oldPublicationId != null && !oldPublicationId.equals(savedItem.getPublicationId())) {
+            Publication oldPub = publications.findById(oldPublicationId);
+            if (oldPub != null) {
+                oldPub.getCopies().removeIf(c -> savedItem.getId().equals(c.getId()));
+                publications.save(oldPub);
+            }
+        }
+
+        Publication newPub = publications.findById(savedItem.getPublicationId());
+        if (newPub != null) {
+            newPub.getCopies().removeIf(c -> savedItem.getId().equals(c.getId()));
+            newPub.getCopies().add(savedItem);
+            publications.save(newPub);
+        }
+
+        for (Library lib : libraries.findAll()) {
+            boolean removed = lib.getReadableItems().removeIf(c -> savedItem.getId().equals(c.getId()));
+            if (libraryId != null && libraryId.equals(lib.getId())) {
+                lib.getReadableItems().add(savedItem);
+                libraries.save(lib);
+            } else if (removed) {
+                libraries.save(lib);
+            }
+        }
+
+        return savedItem;
+    }
+
+    public String findLibraryIdForItem(String itemId) {
+        if (itemId == null) {
+            return null;
+        }
+        for (Library lib : libraries.findAll()) {
+            for (ReadableItem copy : lib.getReadableItems()) {
+                if (itemId.equals(copy.getId())) {
+                    return lib.getId();
+                }
+            }
+        }
+        return null;
     }
 
     public List<ReadableItem> findAllItems() {
@@ -187,7 +245,7 @@ public class CatalogService {
     }
 
     public Author saveAuthor(Author author) {
-        if (author.getId() != null) {
+        if (author.getId() != null && !author.getId().isBlank()) {
             Author existing = authors.findById(author.getId());
             if (existing != null && existing != author && author.getBooks().isEmpty()) {
                 author.getBooks().addAll(existing.getBooks());
@@ -222,14 +280,34 @@ public class CatalogService {
     public BookAuthor linkAuthor(String bookId, String authorId) {
         Publication publication = publications.findById(bookId);
         Author author = authors.findById(authorId);
-        if (!(publication instanceof BookDetails) || author == null) {
+        if (!(publication instanceof BookDetails book) || author == null) {
             return null;
         }
-        BookDetails book = (BookDetails) publication;
+        for (BookAuthor existing : book.getBookAuthors()) {
+            if (authorId.equals(existing.getAuthorId())) {
+                return existing;
+            }
+        }
         BookAuthor savedLink = bookAuthors.save(new BookAuthor(null, bookId, authorId));
         book.getBookAuthors().add(savedLink);
+        publications.save(book);
+
         author.getBooks().add(savedLink);
+        authors.save(author);
         return savedLink;
+    }
+
+    public void updateBookPrimaryAuthor(String bookId, String authorId) {
+        Publication publication = publications.findById(bookId);
+        if (!(publication instanceof BookDetails book)) {
+            return;
+        }
+        for (BookAuthor link : new ArrayList<>(book.getBookAuthors())) {
+            unlinkAuthor(link.getId());
+        }
+        if (authorId != null && !authorId.isBlank()) {
+            linkAuthor(bookId, authorId);
+        }
     }
 
     public List<BookAuthor> findAllLinks() {
@@ -242,12 +320,14 @@ public class CatalogService {
             return false;
         }
         Publication publication = publications.findById(link.getBookId());
-        if (publication instanceof BookDetails) {
-            ((BookDetails) publication).getBookAuthors().remove(link);
+        if (publication instanceof BookDetails book) {
+            book.getBookAuthors().removeIf(ba -> linkId.equals(ba.getId()));
+            publications.save(book);
         }
         Author author = authors.findById(link.getAuthorId());
         if (author != null) {
-            author.getBooks().remove(link);
+            author.getBooks().removeIf(ba -> linkId.equals(ba.getId()));
+            authors.save(author);
         }
         return bookAuthors.delete(linkId);
     }
