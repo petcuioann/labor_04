@@ -16,6 +16,7 @@
         <a th:href="@{/reservations}">Reservations</a>
     </nav>
     <h1>Loans</h1>
+    <div th:if="${errorMessage}" style="color: #b00020; background: #fdecea; border: 1px solid #f5c6cb; padding: 8px; margin-bottom: 12px;" th:text="${errorMessage}"></div>
     <p><a th:href="@{/loans/new}">Create New Loan</a></p>
     <table border="1" cellpadding="6" cellspacing="0">
         <thead>
