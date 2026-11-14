@@ -1,8 +1,11 @@
 package com.example.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Library implements Identifiable {
     private String id;
     private String name;
@@ -50,7 +53,7 @@ public class Library implements Identifiable {
     }
 
     public void setMembers(List<Member> members) {
-        this.members = members;
+        this.members = members != null ? members : new ArrayList<>();
     }
 
     public List<ReadableItem> getReadableItems() {
@@ -58,6 +61,18 @@ public class Library implements Identifiable {
     }
 
     public void setReadableItems(List<ReadableItem> readableItems) {
-        this.readableItems = readableItems;
+        this.readableItems = readableItems != null ? readableItems : new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Library that)) return false;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

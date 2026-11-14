@@ -1,8 +1,11 @@
 package com.example.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Member implements Identifiable {
     private String id;
     private String name;
@@ -60,7 +63,7 @@ public class Member implements Identifiable {
     }
 
     public void setReservations(List<Reservation> reservations) {
-        this.reservations = reservations;
+        this.reservations = reservations != null ? reservations : new ArrayList<>();
     }
 
     public List<Loan> getLoans() {
@@ -68,7 +71,7 @@ public class Member implements Identifiable {
     }
 
     public void setLoans(List<Loan> loans) {
-        this.loans = loans;
+        this.loans = loans != null ? loans : new ArrayList<>();
     }
 
     public boolean hasOpenLoans() {
@@ -78,5 +81,17 @@ public class Member implements Identifiable {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Member that)) return false;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
