@@ -204,15 +204,67 @@ public class CirculationService {
             ReadableItem item = items.findById(itemId);
             if (item != null && item.isAvailable()) {
                 item.setStatus(ReadableItem.Status.BORROWED);
+                saveAndSyncItem(item);
                 borrowedItems.add(item);
             }
+        }
+        if (borrowedItems.isEmpty()) {
+            return null;
         }
 
         Loan loan = new Loan(null, memberId, LocalDate.now(), dueDate);
         loan.getItems().addAll(borrowedItems);
         Loan savedLoan = loans.save(loan);
-        member.getLoans().add(savedLoan);
+        syncMemberLoan(member, savedLoan);
         return savedLoan;
+    }
+
+    public Loan updateLoan(String id, String memberId, LocalDate date, LocalDate dueDate, LocalDate returnDate) {
+        Loan existing = loans.findById(id);
+        if (existing == null) {
+            return null;
+        }
+        String oldMemberId = existing.getMemberId();
+        boolean wasReturned = existing.isReturned();
+
+        existing.setMemberId(memberId);
+        if (date != null) {
+            existing.setDate(date);
+        }
+        existing.setDueDate(dueDate);
+        existing.setReturnDate(returnDate);
+
+        if (!wasReturned && existing.isReturned()) {
+            for (ReadableItem loanItem : existing.getItems()) {
+                ReadableItem item = items.findById(loanItem.getId());
+                if (item != null) {
+                    item.setStatus(ReadableItem.Status.AVAILABLE);
+                    saveAndSyncItem(item);
+                }
+                loanItem.setStatus(ReadableItem.Status.AVAILABLE);
+            }
+        } else if (wasReturned && !existing.isReturned()) {
+            for (ReadableItem loanItem : existing.getItems()) {
+                ReadableItem item = items.findById(loanItem.getId());
+                if (item != null) {
+                    item.setStatus(ReadableItem.Status.BORROWED);
+                    saveAndSyncItem(item);
+                }
+                loanItem.setStatus(ReadableItem.Status.BORROWED);
+            }
+        }
+
+        Loan saved = loans.save(existing);
+
+        if (oldMemberId != null && !oldMemberId.equals(memberId)) {
+            Member oldMember = members.findById(oldMemberId);
+            if (oldMember != null) {
+                oldMember.getLoans().removeIf(l -> id.equals(l.getId()));
+                members.save(oldMember);
+            }
+        }
+        syncMemberLoan(members.findById(memberId), saved);
+        return saved;
     }
 
     public Loan returnLoan(String id) {
@@ -222,10 +274,17 @@ public class CirculationService {
         }
 
         loan.setReturnDate(LocalDate.now());
-        for (ReadableItem item : loan.getItems()) {
-            item.setStatus(ReadableItem.Status.AVAILABLE);
+        for (ReadableItem loanItem : loan.getItems()) {
+            ReadableItem item = items.findById(loanItem.getId());
+            if (item != null) {
+                item.setStatus(ReadableItem.Status.AVAILABLE);
+                saveAndSyncItem(item);
+            }
+            loanItem.setStatus(ReadableItem.Status.AVAILABLE);
         }
-        return loan;
+        Loan saved = loans.save(loan);
+        syncMemberLoan(members.findById(saved.getMemberId()), saved);
+        return saved;
     }
 
     public boolean deleteLoan(String id) {
