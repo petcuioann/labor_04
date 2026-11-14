@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/reservations")
@@ -50,8 +51,12 @@ public class ReservationWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteReservation(@PathVariable String id) {
-        circulationService.deleteReservation(id);
+    public String deleteReservation(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            circulationService.deleteReservation(id);
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
         return "redirect:/reservations";
     }
 }

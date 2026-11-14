@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -46,8 +47,12 @@ public class ItemWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteItem(@PathVariable String id) {
-        catalogService.deleteItem(id);
+    public String deleteItem(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            catalogService.deleteItem(id);
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
         return "redirect:/items";
     }
 }
