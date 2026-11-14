@@ -85,10 +85,61 @@ public class CirculationService {
         }
 
         item.setStatus(ReadableItem.Status.RESERVED);
+        saveAndSyncItem(item);
+
         Reservation reservation = new Reservation(null, memberId, itemId, LocalDate.now());
         Reservation savedReservation = reservations.save(reservation);
-        member.getReservations().add(savedReservation);
+        syncMemberReservation(member, savedReservation);
         return savedReservation;
+    }
+
+    public Reservation updateReservation(Reservation updated) {
+        if (updated == null || updated.getId() == null) {
+            return null;
+        }
+        Reservation existing = reservations.findById(updated.getId());
+        if (existing == null) {
+            return null;
+        }
+        String oldMemberId = existing.getMemberId();
+        String oldItemId = existing.getReadableItemId();
+
+        if (updated.getDate() == null) {
+            updated.setDate(existing.getDate());
+        }
+        if (updated.getStatus() == null) {
+            updated.setStatus(existing.getStatus());
+        }
+
+        if (oldItemId != null && !oldItemId.equals(updated.getReadableItemId())) {
+            ReadableItem oldItem = items.findById(oldItemId);
+            if (oldItem != null && oldItem.getStatus() == ReadableItem.Status.RESERVED) {
+                oldItem.setStatus(ReadableItem.Status.AVAILABLE);
+                saveAndSyncItem(oldItem);
+            }
+        }
+
+        ReadableItem newItem = items.findById(updated.getReadableItemId());
+        if (newItem != null) {
+            if (updated.getStatus() == Reservation.Status.ACTIVE) {
+                newItem.setStatus(ReadableItem.Status.RESERVED);
+            } else if (newItem.getStatus() == ReadableItem.Status.RESERVED) {
+                newItem.setStatus(ReadableItem.Status.AVAILABLE);
+            }
+            saveAndSyncItem(newItem);
+        }
+
+        Reservation saved = reservations.save(updated);
+
+        if (oldMemberId != null && !oldMemberId.equals(saved.getMemberId())) {
+            Member oldMember = members.findById(oldMemberId);
+            if (oldMember != null) {
+                oldMember.getReservations().removeIf(r -> saved.getId().equals(r.getId()));
+                members.save(oldMember);
+            }
+        }
+        syncMemberReservation(members.findById(saved.getMemberId()), saved);
+        return saved;
     }
 
     public Reservation cancelReservation(String id) {
@@ -98,11 +149,15 @@ public class CirculationService {
         }
 
         reservation.setStatus(Reservation.Status.CANCELLED);
-        ReadableItem item = items.findById(reservation.getReadableItemId());
+        Reservation saved = reservations.save(reservation);
+
+        ReadableItem item = items.findById(saved.getReadableItemId());
         if (item != null) {
             item.setStatus(ReadableItem.Status.AVAILABLE);
+            saveAndSyncItem(item);
         }
-        return reservation;
+        syncMemberReservation(members.findById(saved.getMemberId()), saved);
+        return saved;
     }
 
     public boolean deleteReservation(String id) {
@@ -114,11 +169,18 @@ public class CirculationService {
             ReadableItem item = items.findById(reservation.getReadableItemId());
             if (item != null) {
                 item.setStatus(ReadableItem.Status.AVAILABLE);
+                saveAndSyncItem(item);
             }
         }
         Member member = members.findById(reservation.getMemberId());
         if (member != null) {
-            member.getReservations().remove(reservation);
+            member.getReservations().removeIf(r -> id.equals(r.getId()));
+            members.save(member);
+        }
+        for (Loan loan : loans.findAll()) {
+            if (loan.getReservations().removeIf(r -> id.equals(r.getId()))) {
+                loans.save(loan);
+            }
         }
         return reservations.delete(id);
     }
