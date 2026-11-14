@@ -194,8 +194,12 @@ public class CatalogService {
         if (author == null) {
             return false;
         }
-        for (BookAuthor link : new ArrayList<>(author.getBooks())) {
-            unlinkAuthor(link.getId());
+        boolean hasBooks = !author.getBooks().isEmpty()
+                || bookAuthors.findAll().stream().anyMatch(ba -> id.equals(ba.getAuthorId()));
+        if (hasBooks) {
+            throw new IllegalStateException(
+                    "Cannot delete author '" + author.getName()
+                            + "' because they still have linked books. Delete or unlink their books first.");
         }
         return authors.delete(id);
     }
