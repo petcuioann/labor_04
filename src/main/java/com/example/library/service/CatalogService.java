@@ -4,9 +4,11 @@ import com.example.library.model.Author;
 import com.example.library.model.BookAuthor;
 import com.example.library.model.BookDetails;
 import com.example.library.model.Library;
+import com.example.library.model.Loan;
 import com.example.library.model.MagazineDetails;
 import com.example.library.model.Publication;
 import com.example.library.model.ReadableItem;
+import com.example.library.model.Reservation;
 import com.example.library.repository.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +21,24 @@ public class CatalogService {
     private final CrudRepository<Author> authors;
     private final CrudRepository<BookAuthor> bookAuthors;
     private final CrudRepository<Library> libraries;
+    private final CrudRepository<Loan> loans;
+    private final CrudRepository<Reservation> reservations;
 
     public CatalogService(
             CrudRepository<Publication> publications,
             CrudRepository<ReadableItem> items,
             CrudRepository<Author> authors,
             CrudRepository<BookAuthor> bookAuthors,
-            CrudRepository<Library> libraries) {
+            CrudRepository<Library> libraries,
+            CrudRepository<Loan> loans,
+            CrudRepository<Reservation> reservations) {
         this.publications = publications;
         this.items = items;
         this.authors = authors;
         this.bookAuthors = bookAuthors;
         this.libraries = libraries;
+        this.loans = loans;
+        this.reservations = reservations;
     }
 
     public BookDetails saveBook(BookDetails book) {
@@ -93,9 +101,21 @@ public class CatalogService {
         if (publication == null) {
             return false;
         }
-        if (publication instanceof BookDetails) {
-            for (BookAuthor link : new ArrayList<>(((BookDetails) publication).getBookAuthors())) {
+        boolean hasCopies = !publication.getCopies().isEmpty()
+                || items.findAll().stream().anyMatch(i -> id.equals(i.getPublicationId()));
+        if (hasCopies) {
+            throw new IllegalStateException(
+                    "Cannot delete publication '" + publication.getTitle()
+                            + "' because it still has readable item copies. Delete child items first.");
+        }
+        if (publication instanceof BookDetails book) {
+            for (BookAuthor link : new ArrayList<>(book.getBookAuthors())) {
                 unlinkAuthor(link.getId());
+            }
+            for (BookAuthor link : bookAuthors.findAll()) {
+                if (id.equals(link.getBookId())) {
+                    unlinkAuthor(link.getId());
+                }
             }
         }
         return publications.delete(id);
