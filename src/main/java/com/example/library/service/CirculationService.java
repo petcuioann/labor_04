@@ -171,14 +171,24 @@ public class CirculationService {
         if (loan == null) {
             return false;
         }
+        if (!loan.getReservations().isEmpty()) {
+            throw new IllegalStateException(
+                    "Cannot delete loan '" + loan.getId()
+                            + "' because it still has linked reservations. Delete child reservations first.");
+        }
         if (!loan.isReturned()) {
-            for (ReadableItem item : loan.getItems()) {
-                item.setStatus(ReadableItem.Status.AVAILABLE);
+            for (ReadableItem loanItem : loan.getItems()) {
+                ReadableItem item = items.findById(loanItem.getId());
+                if (item != null) {
+                    item.setStatus(ReadableItem.Status.AVAILABLE);
+                    saveAndSyncItem(item);
+                }
             }
         }
         Member member = members.findById(loan.getMemberId());
         if (member != null) {
-            member.getLoans().remove(loan);
+            member.getLoans().removeIf(l -> id.equals(l.getId()));
+            members.save(member);
         }
         return loans.delete(id);
     }
