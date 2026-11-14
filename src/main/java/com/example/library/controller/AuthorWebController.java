@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/authors")
@@ -38,8 +39,12 @@ public class AuthorWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteAuthor(@PathVariable String id) {
-        catalogService.deleteAuthor(id);
+    public String deleteAuthor(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            catalogService.deleteAuthor(id);
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
         return "redirect:/authors";
     }
 }

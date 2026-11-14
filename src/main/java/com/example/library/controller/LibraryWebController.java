@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/libraries")
@@ -38,8 +39,12 @@ public class LibraryWebController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteLibrary(@PathVariable String id) {
-        libraryService.deleteLibrary(id);
+    public String deleteLibrary(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            libraryService.deleteLibrary(id);
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
         return "redirect:/libraries";
     }
 }
