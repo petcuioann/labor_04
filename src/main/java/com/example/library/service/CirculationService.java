@@ -1,7 +1,9 @@
 package com.example.library.service;
 
+import com.example.library.model.Library;
 import com.example.library.model.Loan;
 import com.example.library.model.Member;
+import com.example.library.model.Publication;
 import com.example.library.model.ReadableItem;
 import com.example.library.model.Reservation;
 import com.example.library.repository.CrudRepository;
@@ -16,16 +18,63 @@ public class CirculationService {
     private final CrudRepository<Reservation> reservations;
     private final CrudRepository<Member> members;
     private final CrudRepository<ReadableItem> items;
+    private final CrudRepository<Publication> publications;
+    private final CrudRepository<Library> libraries;
 
     public CirculationService(
             CrudRepository<Loan> loans,
             CrudRepository<Reservation> reservations,
             CrudRepository<Member> members,
-            CrudRepository<ReadableItem> items) {
+            CrudRepository<ReadableItem> items,
+            CrudRepository<Publication> publications,
+            CrudRepository<Library> libraries) {
         this.loans = loans;
         this.reservations = reservations;
         this.members = members;
         this.items = items;
+        this.publications = publications;
+        this.libraries = libraries;
+    }
+
+    private void saveAndSyncItem(ReadableItem item) {
+        ReadableItem saved = items.save(item);
+        Publication pub = publications.findById(saved.getPublicationId());
+        if (pub != null) {
+            for (int i = 0; i < pub.getCopies().size(); i++) {
+                if (saved.getId().equals(pub.getCopies().get(i).getId())) {
+                    pub.getCopies().set(i, saved);
+                    publications.save(pub);
+                    break;
+                }
+            }
+        }
+        for (Library lib : libraries.findAll()) {
+            for (int i = 0; i < lib.getReadableItems().size(); i++) {
+                if (saved.getId().equals(lib.getReadableItems().get(i).getId())) {
+                    lib.getReadableItems().set(i, saved);
+                    libraries.save(lib);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void syncMemberReservation(Member member, Reservation reservation) {
+        if (member == null) {
+            return;
+        }
+        member.getReservations().removeIf(r -> reservation.getId().equals(r.getId()));
+        member.getReservations().add(reservation);
+        members.save(member);
+    }
+
+    private void syncMemberLoan(Member member, Loan loan) {
+        if (member == null) {
+            return;
+        }
+        member.getLoans().removeIf(l -> loan.getId().equals(l.getId()));
+        member.getLoans().add(loan);
+        members.save(member);
     }
 
     public Reservation reserve(String memberId, String itemId) {
