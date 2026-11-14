@@ -161,12 +161,27 @@ public class CatalogService {
         if (item == null) {
             return false;
         }
+        boolean inLoan = item.getStatus() == ReadableItem.Status.BORROWED
+                || loans.findAll().stream()
+                        .anyMatch(l -> l.getItems().stream().anyMatch(i -> id.equals(i.getId())));
+        boolean inReservation = item.getStatus() == ReadableItem.Status.RESERVED
+                || reservations.findAll().stream()
+                        .anyMatch(r -> id.equals(r.getReadableItemId()));
+        if (inLoan || inReservation) {
+            throw new IllegalStateException(
+                    "Cannot delete readable item '" + item.getBarcode()
+                            + "' because it is referenced by a loan or reservation. Delete the loan/reservation first.");
+        }
+
         Publication publication = publications.findById(item.getPublicationId());
         if (publication != null) {
-            publication.getCopies().remove(item);
+            publication.getCopies().removeIf(c -> id.equals(c.getId()));
+            publications.save(publication);
         }
         for (Library library : libraries.findAll()) {
-            library.getReadableItems().remove(item);
+            if (library.getReadableItems().removeIf(c -> id.equals(c.getId()))) {
+                libraries.save(library);
+            }
         }
         return items.delete(id);
     }
