@@ -1,7 +1,11 @@
 package com.example.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
+import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Reservation implements Identifiable {
     public enum Status {
         ACTIVE, CANCELLED, COMPLETED
@@ -63,10 +67,23 @@ public class Reservation implements Identifiable {
     }
 
     public void setStatus(Status status) {
-        this.status = status;
+        this.status = status != null ? status : Status.ACTIVE;
     }
 
+    @JsonIgnore
     public boolean isActive() {
         return status == Status.ACTIVE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Reservation that)) return false;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
