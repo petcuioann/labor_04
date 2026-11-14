@@ -1,7 +1,9 @@
 package com.example.library.service;
 
 import com.example.library.model.Library;
+import com.example.library.model.Loan;
 import com.example.library.model.Member;
+import com.example.library.model.Reservation;
 import com.example.library.repository.CrudRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +13,22 @@ import org.springframework.stereotype.Service;
 public class LibraryService {
     private final CrudRepository<Library> libraries;
     private final CrudRepository<Member> members;
+    private final CrudRepository<Loan> loans;
+    private final CrudRepository<Reservation> reservations;
 
-    public LibraryService(CrudRepository<Library> libraries, CrudRepository<Member> members) {
+    public LibraryService(
+            CrudRepository<Library> libraries,
+            CrudRepository<Member> members,
+            CrudRepository<Loan> loans,
+            CrudRepository<Reservation> reservations) {
         this.libraries = libraries;
         this.members = members;
+        this.loans = loans;
+        this.reservations = reservations;
     }
 
     public Library saveLibrary(Library library) {
-        if (library.getId() != null) {
+        if (library.getId() != null && !library.getId().isBlank()) {
             Library existing = libraries.findById(library.getId());
             if (existing != null && existing != library) {
                 if (library.getMembers().isEmpty()) {
@@ -57,9 +67,11 @@ public class LibraryService {
     }
 
     public Member registerMember(Member member) {
-        if (member.getId() != null) {
+        String oldLibraryId = null;
+        if (member.getId() != null && !member.getId().isBlank()) {
             Member existing = members.findById(member.getId());
             if (existing != null && existing != member) {
+                oldLibraryId = existing.getLibraryId();
                 if (member.getLoans().isEmpty()) {
                     member.getLoans().addAll(existing.getLoans());
                 }
@@ -69,9 +81,20 @@ public class LibraryService {
             }
         }
         Member savedMember = members.save(member);
-        Library library = libraries.findById(member.getLibraryId());
-        if (library != null && !library.getMembers().contains(savedMember)) {
+
+        if (oldLibraryId != null && !oldLibraryId.equals(savedMember.getLibraryId())) {
+            Library oldLibrary = libraries.findById(oldLibraryId);
+            if (oldLibrary != null) {
+                oldLibrary.getMembers().removeIf(m -> savedMember.getId().equals(m.getId()));
+                libraries.save(oldLibrary);
+            }
+        }
+
+        Library library = libraries.findById(savedMember.getLibraryId());
+        if (library != null) {
+            library.getMembers().removeIf(m -> savedMember.getId().equals(m.getId()));
             library.getMembers().add(savedMember);
+            libraries.save(library);
         }
         return savedMember;
     }
@@ -99,9 +122,20 @@ public class LibraryService {
         if (member == null) {
             return false;
         }
+        boolean hasLoans = !member.getLoans().isEmpty()
+                || loans.findAll().stream().anyMatch(l -> id.equals(l.getMemberId()));
+        boolean hasReservations = !member.getReservations().isEmpty()
+                || reservations.findAll().stream().anyMatch(r -> id.equals(r.getMemberId()));
+        if (hasLoans || hasReservations) {
+            throw new IllegalStateException(
+                    "Cannot delete member '" + member.getName()
+                            + "' because they still have loans or reservations. Delete child entities first.");
+        }
+
         Library library = libraries.findById(member.getLibraryId());
         if (library != null) {
-            library.getMembers().remove(member);
+            library.getMembers().removeIf(m -> id.equals(m.getId()));
+            libraries.save(library);
         }
         return members.delete(id);
     }
