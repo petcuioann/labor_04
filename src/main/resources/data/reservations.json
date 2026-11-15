@@ -1,0 +1,61 @@
+[ {
+  "id" : "res-1",
+  "memberId" : "mem-1",
+  "readableItemId" : "item-1",
+  "date" : "2026-10-02",
+  "status" : "CANCELLED"
+}, {
+  "id" : "res-2",
+  "memberId" : "mem-2",
+  "readableItemId" : "item-2",
+  "date" : "2026-10-03",
+  "status" : "COMPLETED"
+}, {
+  "id" : "res-3",
+  "memberId" : "mem-3",
+  "readableItemId" : "item-3",
+  "date" : "2026-10-04",
+  "status" : "CANCELLED"
+}, {
+  "id" : "res-4",
+  "memberId" : "mem-4",
+  "readableItemId" : "item-4",
+  "date" : "2026-10-05",
+  "status" : "COMPLETED"
+}, {
+  "id" : "res-5",
+  "memberId" : "mem-5",
+  "readableItemId" : "item-5",
+  "date" : "2026-10-06",
+  "status" : "CANCELLED"
+}, {
+  "id" : "res-6",
+  "memberId" : "mem-6",
+  "readableItemId" : "item-6",
+  "date" : "2026-10-07",
+  "status" : "COMPLETED"
+}, {
+  "id" : "res-7",
+  "memberId" : "mem-7",
+  "readableItemId" : "item-7",
+  "date" : "2026-10-08",
+  "status" : "CANCELLED"
+}, {
+  "id" : "res-8",
+  "memberId" : "mem-8",
+  "readableItemId" : "item-8",
+  "date" : "2026-10-09",
+  "status" : "COMPLETED"
+}, {
+  "id" : "res-9",
+  "memberId" : "mem-8",
+  "readableItemId" : "item-11",
+  "date" : "2026-11-12",
+  "status" : "ACTIVE"
+}, {
+  "id" : "res-10",
+  "memberId" : "mem-9",
+  "readableItemId" : "item-12",
+  "date" : "2026-11-12",
+  "status" : "ACTIVE"
+} ]

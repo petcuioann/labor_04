@@ -1,0 +1,131 @@
+[ {
+  "id" : "loan-1",
+  "memberId" : "mem-1",
+  "date" : "2026-10-02",
+  "dueDate" : "2026-10-16",
+  "returnDate" : "2026-10-12",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-1",
+    "publicationId" : "book-1",
+    "barcode" : "BC-101",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-2",
+  "memberId" : "mem-2",
+  "date" : "2026-10-03",
+  "dueDate" : "2026-10-17",
+  "returnDate" : "2026-10-13",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-2",
+    "publicationId" : "book-2",
+    "barcode" : "BC-102",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-3",
+  "memberId" : "mem-3",
+  "date" : "2026-10-04",
+  "dueDate" : "2026-10-18",
+  "returnDate" : "2026-10-14",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-3",
+    "publicationId" : "book-3",
+    "barcode" : "BC-103",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-4",
+  "memberId" : "mem-4",
+  "date" : "2026-10-05",
+  "dueDate" : "2026-10-19",
+  "returnDate" : "2026-10-15",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-4",
+    "publicationId" : "book-4",
+    "barcode" : "BC-104",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-5",
+  "memberId" : "mem-5",
+  "date" : "2026-10-06",
+  "dueDate" : "2026-10-20",
+  "returnDate" : "2026-10-16",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-5",
+    "publicationId" : "book-5",
+    "barcode" : "BC-105",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-6",
+  "memberId" : "mem-6",
+  "date" : "2026-10-07",
+  "dueDate" : "2026-10-21",
+  "returnDate" : "2026-10-17",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-6",
+    "publicationId" : "book-6",
+    "barcode" : "BC-106",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-7",
+  "memberId" : "mem-7",
+  "date" : "2026-10-08",
+  "dueDate" : "2026-10-22",
+  "returnDate" : "2026-10-18",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-7",
+    "publicationId" : "book-7",
+    "barcode" : "BC-107",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-8",
+  "memberId" : "mem-8",
+  "date" : "2026-10-09",
+  "dueDate" : "2026-10-23",
+  "returnDate" : "2026-10-19",
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-8",
+    "publicationId" : "book-8",
+    "barcode" : "BC-108",
+    "status" : "AVAILABLE"
+  } ]
+}, {
+  "id" : "loan-9",
+  "memberId" : "mem-8",
+  "date" : "2026-11-10",
+  "dueDate" : "2026-11-24",
+  "returnDate" : null,
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-9",
+    "publicationId" : "book-9",
+    "barcode" : "BC-109",
+    "status" : "BORROWED"
+  } ]
+}, {
+  "id" : "loan-10",
+  "memberId" : "mem-9",
+  "date" : "2026-11-10",
+  "dueDate" : "2026-11-24",
+  "returnDate" : null,
+  "reservations" : [ ],
+  "items" : [ {
+    "id" : "item-10",
+    "publicationId" : "book-1",
+    "barcode" : "BC-110",
+    "status" : "BORROWED"
+  } ]
+} ]
