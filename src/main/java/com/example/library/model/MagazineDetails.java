@@ -1,5 +1,8 @@
 package com.example.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MagazineDetails extends Publication {
     private String publisher;
     private int issueNumber;

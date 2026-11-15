@@ -1,8 +1,10 @@
 package com.example.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BookDetails extends Publication {
     private String isbn;
     private int pageCount;
@@ -38,6 +40,6 @@ public class BookDetails extends Publication {
     }
 
     public void setBookAuthors(List<BookAuthor> bookAuthors) {
-        this.bookAuthors = bookAuthors;
+        this.bookAuthors = bookAuthors != null ? bookAuthors : new ArrayList<>();
     }
 }
