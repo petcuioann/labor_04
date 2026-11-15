@@ -145,13 +145,82 @@ public class DataInitializer implements CommandLineRunner {
             catalogService.addCopy(new ReadableItem(c[0], c[1], c[2]), c[3]);
         }
 
-        Member member1 = libraryService.registerMember(
-                new Member("mem-1", "Ioan Petcu", "ioan.petcu@stud.ubbcluj.ro", "lib-1"));
-        Member member2 = libraryService.registerMember(
-                new Member("mem-2", "Andrei Emanuel", "andrei.emanuel@stud.ubbcluj.ro", "lib-1"));
+        // 10 Members (mem-10 has no loans or reservations)
+        String[][] members = {
+            {"mem-1", "Ioan Petcu", "ioan.petcu@stud.ubbcluj.ro", "lib-1"},
+            {"mem-2", "Andrei Emanuel", "andrei.emanuel@stud.ubbcluj.ro", "lib-1"},
+            {"mem-3", "Dan Baraian", "dan.baraian@stud.ubbcluj.ro", "lib-2"},
+            {"mem-4", "Daria Stan", "daria.stan@stud.ubbcluj.ro", "lib-2"},
+            {"mem-5", "Alexia Badeu", "alexia.badeu@stud.ubbcluj.ro", "lib-3"},
+            {"mem-6", "Iancu de Hunedoara", "iancu.hunedoara@stud.ubbcluj.ro", "lib-4"},
+            {"mem-7", "Gabriel Mircea", "gabriel.mircea@stud.ubbcluj.ro", "lib-5"},
+            {"mem-8", "Maria Ionescu", "maria.ionescu@stud.ubbcluj.ro", "lib-6"},
+            {"mem-9", "Vlad Popescu", "vlad.popescu@stud.ubbcluj.ro", "lib-7"},
+            {"mem-10", "Elena Dumitrescu", "elena.dumitrescu@stud.ubbcluj.ro", "lib-8"}
+        };
+        for (String[] m : members) {
+            libraryService.registerMember(new Member(m[0], m[1].trim(), m[2], m[3]));
+        }
 
-        circulationService.borrow(
-                member1.getId(), List.of("item-1"), LocalDate.now().plusDays(14));
-        circulationService.reserve(member2.getId(), "item-2");
+        // 10 Loans (loan-1 .. loan-8 returned; loan-9, loan-10 active on item-9, item-10)
+        LocalDate baseDate = LocalDate.of(2026, 10, 1);
+        for (int i = 1; i <= 8; i++) {
+            String loanId = "loan-" + i;
+            String memId = "mem-" + i;
+            String itemId = "item-" + i;
+            Loan loan = new Loan(loanId, memId, baseDate.plusDays(i), baseDate.plusDays(i + 14));
+            loan.setReturnDate(baseDate.plusDays(i + 10));
+            loan.getItems().add(catalogService.findItem(itemId));
+            Loan saved = loanRepository.save(loan);
+            Member mem = libraryService.findMember(memId);
+            mem.getLoans().add(saved);
+            libraryService.registerMember(mem);
+        }
+
+        // Active loans loan-9 and loan-10
+        for (int i = 9; i <= 10; i++) {
+            String loanId = "loan-" + i;
+            String memId = "mem-" + (i - 1);
+            String itemId = "item-" + i;
+            ReadableItem item = catalogService.findItem(itemId);
+            item.setStatus(ReadableItem.Status.BORROWED);
+            catalogService.updateCopy(item, catalogService.findLibraryIdForItem(itemId));
+
+            Loan loan = new Loan(loanId, memId, LocalDate.of(2026, 11, 10), LocalDate.of(2026, 11, 24));
+            loan.getItems().add(item);
+            Loan saved = loanRepository.save(loan);
+            Member mem = libraryService.findMember(memId);
+            mem.getLoans().add(saved);
+            libraryService.registerMember(mem);
+        }
+
+        // 10 Reservations (res-1 .. res-8 completed/cancelled; res-9, res-10 active on item-11, item-12)
+        for (int i = 1; i <= 8; i++) {
+            String resId = "res-" + i;
+            String memId = "mem-" + i;
+            String itemId = "item-" + i;
+            Reservation res = new Reservation(resId, memId, itemId, baseDate.plusDays(i));
+            res.setStatus(i % 2 == 0 ? Reservation.Status.COMPLETED : Reservation.Status.CANCELLED);
+            Reservation saved = reservationRepository.save(res);
+            Member mem = libraryService.findMember(memId);
+            mem.getReservations().add(saved);
+            libraryService.registerMember(mem);
+        }
+
+        for (int i = 9; i <= 10; i++) {
+            String resId = "res-" + i;
+            String memId = "mem-" + (i - 1);
+            String itemId = "item-" + (i + 2); // item-11, item-12
+            ReadableItem item = catalogService.findItem(itemId);
+            item.setStatus(ReadableItem.Status.RESERVED);
+            catalogService.updateCopy(item, catalogService.findLibraryIdForItem(itemId));
+
+            Reservation res = new Reservation(resId, memId, itemId, LocalDate.of(2026, 11, 12));
+            res.setStatus(Reservation.Status.ACTIVE);
+            Reservation saved = reservationRepository.save(res);
+            Member mem = libraryService.findMember(memId);
+            mem.getReservations().add(saved);
+            libraryService.registerMember(mem);
+        }
     }
 }
