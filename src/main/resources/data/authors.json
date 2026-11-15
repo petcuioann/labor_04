@@ -1,0 +1,81 @@
+[ {
+  "id" : "auth-1",
+  "name" : "George Orwell",
+  "books" : [ {
+    "id" : "ba-1",
+    "bookId" : "book-1",
+    "authorId" : "auth-1"
+  } ]
+}, {
+  "id" : "auth-2",
+  "name" : "J.R.R. Tolkien",
+  "books" : [ {
+    "id" : "ba-2",
+    "bookId" : "book-2",
+    "authorId" : "auth-2"
+  } ]
+}, {
+  "id" : "auth-3",
+  "name" : "Robert C. Martin",
+  "books" : [ {
+    "id" : "ba-3",
+    "bookId" : "book-3",
+    "authorId" : "auth-3"
+  } ]
+}, {
+  "id" : "auth-4",
+  "name" : "Martin Fowler",
+  "books" : [ {
+    "id" : "ba-4",
+    "bookId" : "book-4",
+    "authorId" : "auth-4"
+  }, {
+    "id" : "ba-10",
+    "bookId" : "book-8",
+    "authorId" : "auth-4"
+  } ]
+}, {
+  "id" : "auth-5",
+  "name" : "Joshua Bloch",
+  "books" : [ {
+    "id" : "ba-5",
+    "bookId" : "book-5",
+    "authorId" : "auth-5"
+  } ]
+}, {
+  "id" : "auth-6",
+  "name" : "Donald E. Knuth",
+  "books" : [ {
+    "id" : "ba-6",
+    "bookId" : "book-6",
+    "authorId" : "auth-6"
+  } ]
+}, {
+  "id" : "auth-7",
+  "name" : "Thomas H. Cormen",
+  "books" : [ {
+    "id" : "ba-7",
+    "bookId" : "book-7",
+    "authorId" : "auth-7"
+  } ]
+}, {
+  "id" : "auth-8",
+  "name" : "Erich Gamma",
+  "books" : [ {
+    "id" : "ba-8",
+    "bookId" : "book-8",
+    "authorId" : "auth-8"
+  } ]
+}, {
+  "id" : "auth-9",
+  "name" : "Brian Goetz",
+  "books" : [ {
+    "id" : "ba-9",
+    "bookId" : "book-9",
+    "authorId" : "auth-9"
+  } ]
+}, {
+  "id" : "auth-10",
+  "name" : "Bjarne Stroustrup",
+  "books" : [ ]
+} ]

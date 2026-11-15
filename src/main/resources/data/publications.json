@@ -1,0 +1,205 @@
+[ {
+  "type" : "BOOK",
+  "id" : "book-1",
+  "title" : "1984",
+  "copies" : [ {
+    "id" : "item-1",
+    "publicationId" : "book-1",
+    "barcode" : "BC-101",
+    "status" : "AVAILABLE"
+  }, {
+    "id" : "item-10",
+    "publicationId" : "book-1",
+    "barcode" : "BC-110",
+    "status" : "BORROWED"
+  } ],
+  "isbn" : "978-0451524935",
+  "pageCount" : 328,
+  "bookAuthors" : [ {
+    "id" : "ba-1",
+    "bookId" : "book-1",
+    "authorId" : "auth-1"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-2",
+  "title" : "The Hobbit",
+  "copies" : [ {
+    "id" : "item-2",
+    "publicationId" : "book-2",
+    "barcode" : "BC-102",
+    "status" : "AVAILABLE"
+  }, {
+    "id" : "item-11",
+    "publicationId" : "book-2",
+    "barcode" : "BC-111",
+    "status" : "RESERVED"
+  } ],
+  "isbn" : "978-0547928227",
+  "pageCount" : 310,
+  "bookAuthors" : [ {
+    "id" : "ba-2",
+    "bookId" : "book-2",
+    "authorId" : "auth-2"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-3",
+  "title" : "Clean Code",
+  "copies" : [ {
+    "id" : "item-3",
+    "publicationId" : "book-3",
+    "barcode" : "BC-103",
+    "status" : "AVAILABLE"
+  }, {
+    "id" : "item-12",
+    "publicationId" : "book-3",
+    "barcode" : "BC-112",
+    "status" : "RESERVED"
+  } ],
+  "isbn" : "978-0132350884",
+  "pageCount" : 464,
+  "bookAuthors" : [ {
+    "id" : "ba-3",
+    "bookId" : "book-3",
+    "authorId" : "auth-3"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-4",
+  "title" : "Refactoring",
+  "copies" : [ {
+    "id" : "item-4",
+    "publicationId" : "book-4",
+    "barcode" : "BC-104",
+    "status" : "AVAILABLE"
+  }, {
+    "id" : "item-13",
+    "publicationId" : "book-4",
+    "barcode" : "BC-113",
+    "status" : "AVAILABLE"
+  } ],
+  "isbn" : "978-0134757599",
+  "pageCount" : 448,
+  "bookAuthors" : [ {
+    "id" : "ba-4",
+    "bookId" : "book-4",
+    "authorId" : "auth-4"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-5",
+  "title" : "Effective Java",
+  "copies" : [ {
+    "id" : "item-5",
+    "publicationId" : "book-5",
+    "barcode" : "BC-105",
+    "status" : "AVAILABLE"
+  }, {
+    "id" : "item-14",
+    "publicationId" : "book-5",
+    "barcode" : "BC-114",
+    "status" : "AVAILABLE"
+  } ],
+  "isbn" : "978-0134685991",
+  "pageCount" : 416,
+  "bookAuthors" : [ {
+    "id" : "ba-5",
+    "bookId" : "book-5",
+    "authorId" : "auth-5"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-6",
+  "title" : "The Art of Computer Programming Vol. 1",
+  "copies" : [ {
+    "id" : "item-6",
+    "publicationId" : "book-6",
+    "barcode" : "BC-106",
+    "status" : "AVAILABLE"
+  } ],
+  "isbn" : "978-0201896831",
+  "pageCount" : 672,
+  "bookAuthors" : [ {
+    "id" : "ba-6",
+    "bookId" : "book-6",
+    "authorId" : "auth-6"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-7",
+  "title" : "Introduction to Algorithms",
+  "copies" : [ {
+    "id" : "item-7",
+    "publicationId" : "book-7",
+    "barcode" : "BC-107",
+    "status" : "AVAILABLE"
+  } ],
+  "isbn" : "978-0262046305",
+  "pageCount" : 1312,
+  "bookAuthors" : [ {
+    "id" : "ba-7",
+    "bookId" : "book-7",
+    "authorId" : "auth-7"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-8",
+  "title" : "Design Patterns",
+  "copies" : [ {
+    "id" : "item-8",
+    "publicationId" : "book-8",
+    "barcode" : "BC-108",
+    "status" : "AVAILABLE"
+  } ],
+  "isbn" : "978-0201633610",
+  "pageCount" : 395,
+  "bookAuthors" : [ {
+    "id" : "ba-8",
+    "bookId" : "book-8",
+    "authorId" : "auth-8"
+  }, {
+    "id" : "ba-10",
+    "bookId" : "book-8",
+    "authorId" : "auth-4"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-9",
+  "title" : "Java Concurrency in Practice",
+  "copies" : [ {
+    "id" : "item-9",
+    "publicationId" : "book-9",
+    "barcode" : "BC-109",
+    "status" : "BORROWED"
+  } ],
+  "isbn" : "978-0321349606",
+  "pageCount" : 432,
+  "bookAuthors" : [ {
+    "id" : "ba-9",
+    "bookId" : "book-9",
+    "authorId" : "auth-9"
+  } ]
+}, {
+  "type" : "BOOK",
+  "id" : "book-10",
+  "title" : "The C++ Programming Language",
+  "copies" : [ ],
+  "isbn" : "978-0321563842",
+  "pageCount" : 1376,
+  "bookAuthors" : [ ]
+}, {
+  "type" : "MAGAZINE",
+  "id" : "mag-1",
+  "title" : "Nature Vol. 612",
+  "copies" : [ ],
+  "publisher" : "Springer Nature",
+  "issueNumber" : 612
+}, {
+  "type" : "MAGAZINE",
+  "id" : "mag-2",
+  "title" : "IEEE Software Vol. 41",
+  "copies" : [ ],
+  "publisher" : "IEEE Computer Society",
+  "issueNumber" : 41
+} ]

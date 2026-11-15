@@ -1,0 +1,71 @@
+[ {
+  "id" : "item-1",
+  "publicationId" : "book-1",
+  "barcode" : "BC-101",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-2",
+  "publicationId" : "book-2",
+  "barcode" : "BC-102",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-3",
+  "publicationId" : "book-3",
+  "barcode" : "BC-103",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-4",
+  "publicationId" : "book-4",
+  "barcode" : "BC-104",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-5",
+  "publicationId" : "book-5",
+  "barcode" : "BC-105",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-6",
+  "publicationId" : "book-6",
+  "barcode" : "BC-106",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-7",
+  "publicationId" : "book-7",
+  "barcode" : "BC-107",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-8",
+  "publicationId" : "book-8",
+  "barcode" : "BC-108",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-9",
+  "publicationId" : "book-9",
+  "barcode" : "BC-109",
+  "status" : "BORROWED"
+}, {
+  "id" : "item-10",
+  "publicationId" : "book-1",
+  "barcode" : "BC-110",
+  "status" : "BORROWED"
+}, {
+  "id" : "item-11",
+  "publicationId" : "book-2",
+  "barcode" : "BC-111",
+  "status" : "RESERVED"
+}, {
+  "id" : "item-12",
+  "publicationId" : "book-3",
+  "barcode" : "BC-112",
+  "status" : "RESERVED"
+}, {
+  "id" : "item-13",
+  "publicationId" : "book-4",
+  "barcode" : "BC-113",
+  "status" : "AVAILABLE"
+}, {
+  "id" : "item-14",
+  "publicationId" : "book-5",
+  "barcode" : "BC-114",
+  "status" : "AVAILABLE"
+} ]
