@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/items")
@@ -35,6 +35,9 @@ public class ItemWebController {
         model.addAttribute("item", new ReadableItem());
         model.addAttribute("publications", catalogService.findAllPublications());
         model.addAttribute("libraries", libraryService.findAllLibraries());
+        model.addAttribute("selectedLibraryId", "");
+        model.addAttribute("statuses", ReadableItem.Status.values());
+        model.addAttribute("editMode", false);
         return "item/form";
     }
 
@@ -43,6 +46,42 @@ public class ItemWebController {
             @ModelAttribute("item") ReadableItem item,
             @RequestParam String libraryId) {
         catalogService.addCopy(item, libraryId);
+        return "redirect:/items";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        ReadableItem item = catalogService.findItem(id);
+        if (item == null) {
+            return "redirect:/items";
+        }
+        model.addAttribute("item", item);
+        model.addAttribute("libraryId", catalogService.findLibraryIdForItem(id));
+        return "item/details";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model) {
+        ReadableItem item = catalogService.findItem(id);
+        if (item == null) {
+            return "redirect:/items";
+        }
+        model.addAttribute("item", item);
+        model.addAttribute("publications", catalogService.findAllPublications());
+        model.addAttribute("libraries", libraryService.findAllLibraries());
+        model.addAttribute("selectedLibraryId", catalogService.findLibraryIdForItem(id));
+        model.addAttribute("statuses", ReadableItem.Status.values());
+        model.addAttribute("editMode", true);
+        return "item/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateItem(
+            @PathVariable String id,
+            @ModelAttribute("item") ReadableItem item,
+            @RequestParam String libraryId) {
+        item.setId(id);
+        catalogService.updateCopy(item, libraryId);
         return "redirect:/items";
     }
 
