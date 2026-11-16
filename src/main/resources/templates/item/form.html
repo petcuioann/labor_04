@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Readable Item</title>
+    <title th:text="${editMode} ? 'Edit Readable Item' : 'Create Readable Item'">Readable Item Form</title>
 </head>
 <body>
-    <h1>Create New Readable Item</h1>
-    <form th:action="@{/items}" th:object="${item}" method="post">
+    <h1 th:text="${editMode} ? 'Edit Readable Item' : 'Create New Readable Item'">Readable Item Form</h1>
+    <form th:action="${editMode} ? @{'/items/' + ${item.id} + '/edit'} : @{/items}" th:object="${item}" method="post">
         <div>
             <label for="barcode">Barcode:</label>
             <input type="text" id="barcode" th:field="*{barcode}" required>
@@ -20,7 +20,13 @@
         <div>
             <label for="libraryId">Library:</label>
             <select id="libraryId" name="libraryId" required>
-                <option th:each="lib : ${libraries}" th:value="${lib.id}" th:text="${lib.name + ' (' + lib.id + ')'}"></option>
+                <option th:each="lib : ${libraries}" th:value="${lib.id}" th:text="${lib.name + ' (' + lib.id + ')'}" th:selected="${lib.id == selectedLibraryId}"></option>
+            </select>
+        </div>
+        <div th:if="${editMode}">
+            <label for="status">Status:</label>
+            <select id="status" th:field="*{status}" required>
+                <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>
             </select>
         </div>
         <div>

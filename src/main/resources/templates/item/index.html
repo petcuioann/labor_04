@@ -35,7 +35,9 @@
                 <td th:text="${item.publicationId}"></td>
                 <td th:text="${item.status}"></td>
                 <td>
-                    <form th:action="@{'/items/' + ${item.id} + '/delete'}" method="post">
+                    <a th:href="@{'/items/' + ${item.id}}">Details</a> |
+                    <a th:href="@{'/items/' + ${item.id} + '/edit'}">Edit</a> |
+                    <form th:action="@{'/items/' + ${item.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
