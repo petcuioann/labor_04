@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Details</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">Dashboard</a> |
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <h1>Library Details</h1>
+    <p><strong>ID:</strong> <span th:text="${library.id}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${library.name}"></span></p>
+    <p><strong>Address:</strong> <span th:text="${library.address}"></span></p>
+    <p><strong>Members Count:</strong> <span th:text="${library.members.size()}"></span></p>
+    <p><strong>Readable Items Count:</strong> <span th:text="${library.readableItems.size()}"></span></p>
+    <p>
+        <a th:href="@{'/libraries/' + ${library.id} + '/edit'}">Edit</a> |
+        <a th:href="@{/libraries}">Back to List</a>
+    </p>
+</body>
+</html>

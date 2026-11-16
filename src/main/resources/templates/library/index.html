@@ -37,7 +37,9 @@
                 <td th:text="${lib.members.size()}"></td>
                 <td th:text="${lib.readableItems.size()}"></td>
                 <td>
-                    <form th:action="@{'/libraries/' + ${lib.id} + '/delete'}" method="post">
+                    <a th:href="@{'/libraries/' + ${lib.id}}">Details</a> |
+                    <a th:href="@{'/libraries/' + ${lib.id} + '/edit'}">Edit</a> |
+                    <form th:action="@{'/libraries/' + ${lib.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>

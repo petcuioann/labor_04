@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Library</title>
+    <title th:text="${editMode} ? 'Edit Library' : 'Create Library'">Library Form</title>
 </head>
 <body>
-    <h1>Create New Library</h1>
-    <form th:action="@{/libraries}" th:object="${library}" method="post">
+    <h1 th:text="${editMode} ? 'Edit Library' : 'Create New Library'">Library Form</h1>
+    <form th:action="${editMode} ? @{'/libraries/' + ${library.id} + '/edit'} : @{/libraries}" th:object="${library}" method="post">
         <div>
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" required>
