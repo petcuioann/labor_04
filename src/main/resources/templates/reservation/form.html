@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Reservation</title>
+    <title th:text="${editMode} ? 'Edit Reservation' : 'Create Reservation'">Reservation Form</title>
 </head>
 <body>
-    <h1>Create New Reservation</h1>
-    <form th:action="@{/reservations}" th:object="${reservation}" method="post">
+    <h1 th:text="${editMode} ? 'Edit Reservation' : 'Create New Reservation'">Reservation Form</h1>
+    <form th:action="${editMode} ? @{'/reservations/' + ${reservation.id} + '/edit'} : @{/reservations}" th:object="${reservation}" method="post">
         <div>
             <label for="memberId">Member:</label>
             <select id="memberId" th:field="*{memberId}" required>
@@ -14,9 +14,19 @@
             </select>
         </div>
         <div>
-            <label for="readableItemId">Available Item:</label>
+            <label for="readableItemId">Readable Item:</label>
             <select id="readableItemId" th:field="*{readableItemId}" required>
                 <option th:each="item : ${availableItems}" th:value="${item.id}" th:text="${item.barcode + ' (' + item.publicationId + ')'}"></option>
+            </select>
+        </div>
+        <div th:if="${editMode}">
+            <label for="date">Date:</label>
+            <input type="date" id="date" th:field="*{date}" required>
+        </div>
+        <div th:if="${editMode}">
+            <label for="status">Status:</label>
+            <select id="status" th:field="*{status}" required>
+                <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"></option>
             </select>
         </div>
         <div>

@@ -2,26 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Loan</title>
+    <title th:text="${editMode} ? 'Edit Loan' : 'Create Loan'">Loan Form</title>
 </head>
 <body>
-    <h1>Create New Loan</h1>
-    <form th:action="@{/loans}" method="post">
+    <h1 th:text="${editMode} ? 'Edit Loan' : 'Create New Loan'">Loan Form</h1>
+    <form th:action="${editMode} ? @{'/loans/' + ${loan.id} + '/edit'} : @{/loans}" method="post">
         <div>
             <label for="memberId">Member:</label>
             <select id="memberId" name="memberId" required>
-                <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.name + ' (' + member.id + ')'}"></option>
+                <option th:each="member : ${members}" th:value="${member.id}" th:text="${member.name + ' (' + member.id + ')'}" th:selected="${editMode and member.id == loan.memberId}"></option>
             </select>
         </div>
-        <div>
+        <div th:if="${!editMode}">
             <label for="itemIds">Available Items:</label>
             <select id="itemIds" name="itemIds" multiple required>
                 <option th:each="item : ${availableItems}" th:value="${item.id}" th:text="${item.barcode + ' (' + item.publicationId + ')'}"></option>
             </select>
         </div>
+        <div th:if="${editMode}">
+            <label for="date">Loan Date:</label>
+            <input type="date" id="date" name="date" th:value="${loan.date}" required>
+        </div>
         <div>
             <label for="dueDate">Due Date:</label>
-            <input type="date" id="dueDate" name="dueDate" th:value="${defaultDueDate}" required>
+            <input type="date" id="dueDate" name="dueDate" th:value="${editMode ? loan.dueDate : defaultDueDate}" required>
+        </div>
+        <div th:if="${editMode}">
+            <label for="returnDate">Return Date (leave blank if active):</label>
+            <input type="date" id="returnDate" name="returnDate" th:value="${loan.returnDate}">
         </div>
         <div>
             <button type="submit">Save</button>

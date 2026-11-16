@@ -37,7 +37,12 @@
                 <td th:text="${res.date}"></td>
                 <td th:text="${res.status}"></td>
                 <td>
-                    <form th:action="@{'/reservations/' + ${res.id} + '/delete'}" method="post">
+                    <a th:href="@{'/reservations/' + ${res.id}}">Details</a> |
+                    <a th:href="@{'/reservations/' + ${res.id} + '/edit'}">Edit</a> |
+                    <form th:if="${res.status.name() == 'ACTIVE'}" th:action="@{'/reservations/' + ${res.id} + '/cancel'}" method="post" style="display:inline;">
+                        <button type="submit">Cancel</button>
+                    </form>
+                    <form th:action="@{'/reservations/' + ${res.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>

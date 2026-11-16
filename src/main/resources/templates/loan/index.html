@@ -39,7 +39,12 @@
                 <td th:text="${loan.returnDate != null ? loan.returnDate : 'Active'}"></td>
                 <td th:text="${loan.items.size()}"></td>
                 <td>
-                    <form th:action="@{'/loans/' + ${loan.id} + '/delete'}" method="post">
+                    <a th:href="@{'/loans/' + ${loan.id}}">Details</a> |
+                    <a th:href="@{'/loans/' + ${loan.id} + '/edit'}">Edit</a> |
+                    <form th:if="${loan.returnDate == null}" th:action="@{'/loans/' + ${loan.id} + '/return'}" method="post" style="display:inline;">
+                        <button type="submit">Return</button>
+                    </form>
+                    <form th:action="@{'/loans/' + ${loan.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation Details</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">Dashboard</a> |
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <h1>Reservation Details</h1>
+    <p><strong>ID:</strong> <span th:text="${reservation.id}"></span></p>
+    <p><strong>Member ID:</strong> <span th:text="${reservation.memberId}"></span></p>
+    <p><strong>Readable Item ID:</strong> <span th:text="${reservation.readableItemId}"></span></p>
+    <p><strong>Date:</strong> <span th:text="${reservation.date}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${reservation.status}"></span></p>
+    <p>
+        <a th:href="@{'/reservations/' + ${reservation.id} + '/edit'}">Edit</a> |
+        <a th:href="@{/reservations}">Back to List</a>
+    </p>
+</body>
+</html>
