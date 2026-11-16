@@ -29,11 +29,40 @@ public class LibraryWebController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("library", new Library());
+        model.addAttribute("editMode", false);
         return "library/form";
     }
 
     @PostMapping
     public String createLibrary(@ModelAttribute("library") Library library) {
+        libraryService.saveLibrary(library);
+        return "redirect:/libraries";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        Library library = libraryService.findLibrary(id);
+        if (library == null) {
+            return "redirect:/libraries";
+        }
+        model.addAttribute("library", library);
+        return "library/details";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model) {
+        Library library = libraryService.findLibrary(id);
+        if (library == null) {
+            return "redirect:/libraries";
+        }
+        model.addAttribute("library", library);
+        model.addAttribute("editMode", true);
+        return "library/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateLibrary(@PathVariable String id, @ModelAttribute("library") Library library) {
+        library.setId(id);
         libraryService.saveLibrary(library);
         return "redirect:/libraries";
     }
