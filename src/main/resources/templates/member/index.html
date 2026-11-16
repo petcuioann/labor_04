@@ -39,7 +39,9 @@
                 <td th:text="${member.loans.size()}"></td>
                 <td th:text="${member.reservations.size()}"></td>
                 <td>
-                    <form th:action="@{'/members/' + ${member.id} + '/delete'}" method="post">
+                    <a th:href="@{'/members/' + ${member.id}}">Details</a> |
+                    <a th:href="@{'/members/' + ${member.id} + '/edit'}">Edit</a> |
+                    <form th:action="@{'/members/' + ${member.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>

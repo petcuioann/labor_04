@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Author</title>
+    <title th:text="${editMode} ? 'Edit Author' : 'Create Author'">Author Form</title>
 </head>
 <body>
-    <h1>Create New Author</h1>
-    <form th:action="@{/authors}" th:object="${author}" method="post">
+    <h1 th:text="${editMode} ? 'Edit Author' : 'Create New Author'">Author Form</h1>
+    <form th:action="${editMode} ? @{'/authors/' + ${author.id} + '/edit'} : @{/authors}" th:object="${author}" method="post">
         <div>
             <label for="name">Name:</label>
             <input type="text" id="name" th:field="*{name}" required>

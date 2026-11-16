@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Author Details</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">Dashboard</a> |
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <h1>Author Details</h1>
+    <p><strong>ID:</strong> <span th:text="${author.id}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${author.name}"></span></p>
+    <p><strong>Linked Books Count:</strong> <span th:text="${author.books.size()}"></span></p>
+    <p>
+        <a th:href="@{'/authors/' + ${author.id} + '/edit'}">Edit</a> |
+        <a th:href="@{/authors}">Back to List</a>
+    </p>
+</body>
+</html>

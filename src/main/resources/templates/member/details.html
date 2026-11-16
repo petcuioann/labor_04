@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Details</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">Dashboard</a> |
+        <a th:href="@{/libraries}">Libraries</a> |
+        <a th:href="@{/authors}">Authors</a> |
+        <a th:href="@{/books}">Books</a> |
+        <a th:href="@{/items}">Items</a> |
+        <a th:href="@{/members}">Members</a> |
+        <a th:href="@{/loans}">Loans</a> |
+        <a th:href="@{/reservations}">Reservations</a>
+    </nav>
+    <h1>Member Details</h1>
+    <p><strong>ID:</strong> <span th:text="${member.id}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${member.name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${member.email}"></span></p>
+    <p><strong>Library ID:</strong> <span th:text="${member.libraryId}"></span></p>
+    <p><strong>Loans Count:</strong> <span th:text="${member.loans.size()}"></span></p>
+    <p><strong>Reservations Count:</strong> <span th:text="${member.reservations.size()}"></span></p>
+    <p>
+        <a th:href="@{'/members/' + ${member.id} + '/edit'}">Edit</a> |
+        <a th:href="@{/members}">Back to List</a>
+    </p>
+</body>
+</html>

@@ -33,7 +33,9 @@
                 <td th:text="${author.name}"></td>
                 <td th:text="${author.books.size()}"></td>
                 <td>
-                    <form th:action="@{'/authors/' + ${author.id} + '/delete'}" method="post">
+                    <a th:href="@{'/authors/' + ${author.id}}">Details</a> |
+                    <a th:href="@{'/authors/' + ${author.id} + '/edit'}">Edit</a> |
+                    <form th:action="@{'/authors/' + ${author.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
