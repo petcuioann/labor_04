@@ -41,7 +41,9 @@
                 <td th:text="${book.availableCopies()}"></td>
                 <td th:text="${book.bookAuthors.size()}"></td>
                 <td>
-                    <form th:action="@{'/books/' + ${book.id} + '/delete'}" method="post">
+                    <a th:href="@{'/books/' + ${book.id}}">Details</a> |
+                    <a th:href="@{'/books/' + ${book.id} + '/edit'}">Edit</a> |
+                    <form th:action="@{'/books/' + ${book.id} + '/delete'}" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
