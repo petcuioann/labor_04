@@ -41,12 +41,53 @@ public class ReservationWebController {
         model.addAttribute("reservation", new Reservation());
         model.addAttribute("members", libraryService.findAllMembers());
         model.addAttribute("availableItems", catalogService.findItemsByStatus(ReadableItem.Status.AVAILABLE));
+        model.addAttribute("statuses", Reservation.Status.values());
+        model.addAttribute("editMode", false);
         return "reservation/form";
     }
 
     @PostMapping
     public String createReservation(@ModelAttribute("reservation") Reservation reservation) {
         circulationService.reserve(reservation.getMemberId(), reservation.getReadableItemId());
+        return "redirect:/reservations";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        Reservation reservation = circulationService.findReservation(id);
+        if (reservation == null) {
+            return "redirect:/reservations";
+        }
+        model.addAttribute("reservation", reservation);
+        return "reservation/details";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model) {
+        Reservation reservation = circulationService.findReservation(id);
+        if (reservation == null) {
+            return "redirect:/reservations";
+        }
+        model.addAttribute("reservation", reservation);
+        model.addAttribute("members", libraryService.findAllMembers());
+        model.addAttribute("availableItems", catalogService.findAllItems());
+        model.addAttribute("statuses", Reservation.Status.values());
+        model.addAttribute("editMode", true);
+        return "reservation/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateReservation(
+            @PathVariable String id,
+            @ModelAttribute("reservation") Reservation reservation) {
+        reservation.setId(id);
+        circulationService.updateReservation(reservation);
+        return "redirect:/reservations";
+    }
+
+    @PostMapping("/{id}/cancel")
+    public String cancelReservation(@PathVariable String id) {
+        circulationService.cancelReservation(id);
         return "redirect:/reservations";
     }
 
