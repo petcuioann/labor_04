@@ -29,11 +29,40 @@ public class AuthorWebController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("author", new Author());
+        model.addAttribute("editMode", false);
         return "author/form";
     }
 
     @PostMapping
     public String createAuthor(@ModelAttribute("author") Author author) {
+        catalogService.saveAuthor(author);
+        return "redirect:/authors";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        Author author = catalogService.findAuthor(id);
+        if (author == null) {
+            return "redirect:/authors";
+        }
+        model.addAttribute("author", author);
+        return "author/details";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model) {
+        Author author = catalogService.findAuthor(id);
+        if (author == null) {
+            return "redirect:/authors";
+        }
+        model.addAttribute("author", author);
+        model.addAttribute("editMode", true);
+        return "author/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateAuthor(@PathVariable String id, @ModelAttribute("author") Author author) {
+        author.setId(id);
         catalogService.saveAuthor(author);
         return "redirect:/authors";
     }

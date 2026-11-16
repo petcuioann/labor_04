@@ -30,11 +30,41 @@ public class MemberWebController {
     public String showCreateForm(Model model) {
         model.addAttribute("member", new Member());
         model.addAttribute("libraries", libraryService.findAllLibraries());
+        model.addAttribute("editMode", false);
         return "member/form";
     }
 
     @PostMapping
     public String createMember(@ModelAttribute("member") Member member) {
+        libraryService.registerMember(member);
+        return "redirect:/members";
+    }
+
+    @GetMapping("/{id}")
+    public String showDetails(@PathVariable String id, Model model) {
+        Member member = libraryService.findMember(id);
+        if (member == null) {
+            return "redirect:/members";
+        }
+        model.addAttribute("member", member);
+        return "member/details";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model) {
+        Member member = libraryService.findMember(id);
+        if (member == null) {
+            return "redirect:/members";
+        }
+        model.addAttribute("member", member);
+        model.addAttribute("libraries", libraryService.findAllLibraries());
+        model.addAttribute("editMode", true);
+        return "member/form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateMember(@PathVariable String id, @ModelAttribute("member") Member member) {
+        member.setId(id);
         libraryService.registerMember(member);
         return "redirect:/members";
     }
